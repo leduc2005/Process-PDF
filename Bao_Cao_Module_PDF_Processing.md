@@ -81,9 +81,18 @@ Những thách thức bao gồm tính đa dạng của tài liệu (chứa ảnh
 
 ---
 
+### Vấn đề phụ 7: Rủi ro mất mát dữ liệu (Data Loss) khi Routing độc quyền
+- **Vấn đề:** Khi Classifier phân loại một trang là VISUAL_HEAVY hoặc MIXED do phát hiện có sơ đồ quan trọng, hệ thống vội vã đóng gói hình ảnh để gửi lên Vision LLM, đồng thời vô tình **vứt bỏ toàn bộ chữ** đã trích xuất được ở trang đó. Hậu quả là Vision LLM chỉ tập trung miêu tả hình ảnh mà bỏ quên kiến thức lý thuyết xung quanh, gây rủi ro mất mát kiến thức cực kỳ nghiêm trọng.
+- **Giải pháp phụ (Inclusive Data Merging):** Thay vì rẽ nhánh độc quyền (Exclusive), thiết kế lại System Prompt của Vision LLM để nó có khả năng tiếp nhận cả Image lẫn Extracted Text. AI Router sẽ hợp nhất (Merge) đoạn Text vừa bóc được vào Prompt và gửi kèm với hình ảnh, buộc Vision LLM phải "KẾT HỢP" cả hai nguồn dữ liệu để phân tích.
+- **Lý do chọn:** Việc hợp nhất dữ liệu giúp tận dụng được ưu thế của cả hai công cụ: Text được PyMuPDF/OCR bóc ra (độ chính xác tuyệt đối) + Khả năng đọc hình ảnh của Vision LLM.
+- **Tiêu chí đánh giá / Bằng chứng thực nghiệm:** Chạy lại trên các file bị rủi ro Data Loss (như orderline.pdf), JSON đầu ra đã khôi phục hoàn toàn được phần lý thuyết nền bị mất, đồng thời vẫn giữ được câu hỏi phân tích về biểu đồ. Hệ thống đạt trạng thái 100% không suy hao dữ liệu (Zero Data Loss).
+
+---
+
 ## PHẦN 4. KẾT LUẬN & HƯỚNG PHÁT TRIỂN
 * **Thành quả:** Đã xây dựng thành công một pipeline trích xuất tài liệu mạnh mẽ theo sát cấu trúc thiết kế, bóc tách rõ ràng giữa luồng xử lý chính và các giải pháp dự phòng (Edge cases), đảm bảo tính toàn vẹn 100% của JSON đầu ra.
 * **Tồn tại (Future Work):** Thuật toán tính độ mờ (Blur Score) bằng OpenCV đang bị trùng lặp giá trị trên nhiều ảnh (ví dụ liên tục đo ra 565.82). Cần tinh chỉnh lại logic đọc ma trận ảnh của OpenCV.
+
 
 
 

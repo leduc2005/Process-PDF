@@ -64,7 +64,7 @@ def process_single_pdf(pdf_path: Path, output_dir: Path) -> dict:
 
                 # Gọi Vision LLM phân tích trang ảnh
                 print(f"  🤖 Gọi Vision LLM phân tích trang {cp.page_number}...")
-                vision_analysis = analyze_visual_page(cv_result["processed_image"])
+                vision_analysis = analyze_visual_page(cv_result["processed_image"], text=cp.text)
                 vision_results.append({
                     "page_number": cp.page_number,
                     "analysis": vision_analysis,
@@ -175,4 +175,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

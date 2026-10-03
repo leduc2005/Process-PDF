@@ -57,13 +57,19 @@ Return JSON in this format:
   ]
 }}"""
 
-VISION_PROMPT = """You are an educational expert. Analyze the visual elements in this page.
+VISION_PROMPT = """You are an educational expert. This page contains both text and images.
+Here is the extracted text from this page (if any):
+---
+{text}
+---
+Please look at the attached image, analyze its visual elements (charts, diagrams, illustrations), and COMBINE it with the extracted text above to provide a comprehensive analysis of the page's educational content.
+
 CRITICAL INSTRUCTIONS:
-- You MUST answer in the EXACT SAME LANGUAGE as the text inside the image.
+- You MUST answer in the EXACT SAME LANGUAGE as the source text/image.
 - Do NOT use backslash (\) character in JSON.
 Return JSON in this format:
 {{
-  "page_description": "Detailed description...",
+  "page_description": "Detailed description combining text and visual knowledge...",
   "key_points": ["Point 1", "Point 2"],
   "visual_elements": ["Chart 1", "Diagram 2"]
 }}"""
@@ -128,6 +134,8 @@ def generate_quiz(text: str, num_questions: int = 5, model: str = TEXT_MODEL) ->
         result = call_text_llm(QUIZ_PROMPT.format(content=text[:5000], num_questions=3), model=model)
     return result
 
-def analyze_visual_page(image_bytes: bytes, model: str = VISION_MODEL) -> dict:
-    return call_vision_llm(VISION_PROMPT, image_bytes, model=model)
+def analyze_visual_page(image_bytes: bytes, text: str = "", model: str = VISION_MODEL) -> dict:
+    prompt = VISION_PROMPT.format(text=text if text else "No text extracted.")
+    return call_vision_llm(prompt, image_bytes, model=model)
+
 
