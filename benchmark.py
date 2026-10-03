@@ -106,6 +106,7 @@ def process_single_pdf(pdf_path: Path, output_dir: Path) -> dict:
         "routing_summary": routing_summary,
         "text_chunks_count": len(text_chunks),
         "vision_pages_analyzed": len(vision_results),
+        "ocr_pages_count": len([p for p in pages_data if p.get("ocr_applied")]),
         "vision_results": vision_results,
         "summary": summary_result,
         "quiz": quiz_result,
@@ -174,3 +175,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
